@@ -1,17 +1,29 @@
-# Automate Faceless Content (Enhanced Replica)
+# Automate Faceless Content (Advanced UI App)
 
-This repository is an enhanced, customizable replication inspired by:
+This project is now an advanced app for faceless-content operations with:
 
-- https://github.com/cporter202/automate-faceless-content
-- https://github.com/SkyworkAI/SkyReels-V2
+1. **AI video pipeline** (script → shot plan → voice → render)
+2. **Scalable schedule planner** (100+ channels)
+3. **Interactive UI dashboard** (Streamlit)
+4. **Packaging helpers** (EXE/APK build scripts)
 
-It includes:
+## Run the UI (recommended)
 
-1. **Video pipeline** (script → shot plan → voice → visual render).
-2. **Scalable calendar generator** for up to 100+ channels.
-3. **Packaging helpers** to build a Windows EXE and Android APK.
+```bash
+bash scripts/run_ui.sh
+```
 
-## Commands
+Then open:
+
+- `http://localhost:8501`
+
+UI features:
+
+- **Render Video tab**: Run `render` jobs from a form.
+- **Generate Calendar tab**: Schedule up to 2000 channels with CSV download.
+- **Custom Channels JSON tab**: Validate and save per-channel JSON configs.
+
+## CLI commands
 
 ### Render a video
 
@@ -58,19 +70,15 @@ Example `channels.json`:
 
 ### Windows EXE
 
-Run on Windows (or in a Windows CI runner):
-
 ```bash
 bash scripts/build_exe.sh
 ```
 
-Output:
+Output (on Windows runner):
 
-- `dist/FacelessStudio.exe` (on Windows)
+- `dist/FacelessStudio.exe`
 
 ### Android APK
-
-Run on Linux with Android build prerequisites installed (SDK/NDK/JDK):
 
 ```bash
 bash scripts/build_apk.sh
@@ -79,13 +87,6 @@ bash scripts/build_apk.sh
 Output:
 
 - `bin/*.apk`
-
-Files added for packaging:
-
-- `scripts/build_exe.sh`
-- `scripts/build_apk.sh`
-- `buildozer.spec`
-- `requirements-build.txt`
 
 ## Environment variables
 
