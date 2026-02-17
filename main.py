@@ -43,6 +43,13 @@ class Config:
     shot_count: int
 
 
+QUALITY_PRESETS = {
+    "low": {"preset": "veryfast", "bitrate": "1200k"},
+    "medium": {"preset": "medium", "bitrate": "2500k"},
+    "high": {"preset": "slow", "bitrate": "4500k"},
+}
+
+
 @dataclass
 class Shot:
     index: int
@@ -83,6 +90,17 @@ def parse_weekdays(days: list[str]) -> list[int]:
     return ordered if ordered else [0, 2, 4]
 
 
+def parse_video_size(value: str) -> tuple[int, int]:
+    normalized = value.lower().replace(" ", "")
+    if "x" not in normalized:
+        raise RuntimeError("Video size must be in WIDTHxHEIGHT format, e.g. 1080x1920")
+    width_str, height_str = normalized.split("x", 1)
+    width, height = int(width_str), int(height_str)
+    if width < 240 or height < 240:
+        raise RuntimeError("Video size is too small. Minimum is 240x240")
+    return width, height
+
+
 def load_config() -> Config:
     load_env_file()
 
@@ -94,8 +112,7 @@ def load_config() -> Config:
     visual_mode = os.getenv("VISUAL_MODE", "image").strip().lower()
     shot_count = int(os.getenv("SHOT_COUNT", "8"))
 
-    size = os.getenv("VIDEO_SIZE", "1080x1920").lower().split("x")
-    width, height = int(size[0]), int(size[1])
+    width, height = parse_video_size(os.getenv("VIDEO_SIZE", "1080x1920"))
 
     if visual_mode not in {"image", "video"}:
         raise RuntimeError("VISUAL_MODE must be 'image' or 'video'")
@@ -254,7 +271,14 @@ def add_subtitle_overlay(video, narration: str, width: int, height: int, duratio
 
 
 def build_video_from_video_clips(
-    clip_paths: list[Path], audio_path: Path, narration: str, output_path: Path, width: int, height: int, fps: int
+    clip_paths: list[Path],
+    audio_path: Path,
+    narration: str,
+    output_path: Path,
+    width: int,
+    height: int,
+    fps: int,
+    quality: str,
 ) -> None:
     from moviepy.editor import AudioFileClip, VideoFileClip, concatenate_videoclips
 
@@ -286,7 +310,16 @@ def build_video_from_video_clips(
     video = concatenate_videoclips(selected, method="compose", padding=-0.2).set_audio(audio)
     final = add_subtitle_overlay(video, narration, width, height, duration)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    final.write_videofile(str(output_path), fps=fps, codec="libx264", audio_codec="aac", threads=4, preset="medium")
+    quality_opts = QUALITY_PRESETS[quality]
+    final.write_videofile(
+        str(output_path),
+        fps=fps,
+        codec="libx264",
+        audio_codec="aac",
+        bitrate=quality_opts["bitrate"],
+        threads=4,
+        preset=quality_opts["preset"],
+    )
     audio.close()
     final.close()
 
@@ -300,6 +333,7 @@ def build_video_from_images(
     width: int,
     height: int,
     fps: int,
+    quality: str,
 ) -> None:
     from moviepy.editor import AudioFileClip, ImageClip, concatenate_videoclips, vfx
 
@@ -323,7 +357,16 @@ def build_video_from_images(
     video = concatenate_videoclips(clips, method="compose", padding=-0.2).set_audio(audio)
     final = add_subtitle_overlay(video, narration, width, height, audio.duration)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    final.write_videofile(str(output_path), fps=fps, codec="libx264", audio_codec="aac", threads=4, preset="medium")
+    quality_opts = QUALITY_PRESETS[quality]
+    final.write_videofile(
+        str(output_path),
+        fps=fps,
+        codec="libx264",
+        audio_codec="aac",
+        bitrate=quality_opts["bitrate"],
+        threads=4,
+        preset=quality_opts["preset"],
+    )
     audio.close()
     final.close()
 
@@ -442,6 +485,12 @@ def write_channel_template(path: Path, plans: list[ChannelPlan]) -> None:
 
 def run_render(args) -> None:
     cfg = load_config()
+    width, height = parse_video_size(args.video_size) if args.video_size else (cfg.width, cfg.height)
+    fps = args.fps if args.fps else cfg.fps
+    quality = args.quality
+    if quality not in QUALITY_PRESETS:
+        raise RuntimeError("--quality must be one of: low, medium, high")
+
     print("[1/6] Generating narration script...")
     narration = generate_script(args.topic, cfg.openai_api_key, cfg.duration_seconds)
 
@@ -459,7 +508,7 @@ def run_render(args) -> None:
         print("[4/6] Generating AI images for each shot...")
         images = generate_images_openai(shots, cfg.openai_api_key, work / "images")
         print("[5/6] Rendering cinematic image-to-video sequence...")
-        build_video_from_images(images, shots, audio_path, narration, Path(args.out), cfg.width, cfg.height, cfg.fps)
+        build_video_from_images(images, shots, audio_path, narration, Path(args.out), width, height, fps, quality)
     else:
         print("[4/6] Searching stock video clips...")
         clip_urls = search_pexels_clips(args.topic, cfg.pexels_api_key, min_count=max(6, cfg.shot_count))
@@ -468,7 +517,7 @@ def run_render(args) -> None:
         print(f"[5/6] Downloading {len(clip_urls)} clips...")
         clips = download_files(clip_urls, work / "clips")
         print("[6/6] Rendering final video from clips...")
-        build_video_from_video_clips(clips, audio_path, narration, Path(args.out), cfg.width, cfg.height, cfg.fps)
+        build_video_from_video_clips(clips, audio_path, narration, Path(args.out), width, height, fps, quality)
 
     print(f"Done: {args.out}")
 
@@ -503,6 +552,9 @@ def build_parser() -> argparse.ArgumentParser:
     render = subparsers.add_parser("render", help="Generate and render one faceless video")
     render.add_argument("--topic", required=True, help="Video topic")
     render.add_argument("--out", default="output/video.mp4", help="Output video file path")
+    render.add_argument("--video-size", default="", help="Output size, e.g. 1080x1920 or 1920x1080")
+    render.add_argument("--fps", type=int, default=0, help="Output fps override, e.g. 24, 30, 60")
+    render.add_argument("--quality", default="medium", choices=["low", "medium", "high"], help="Render quality")
 
     cal = subparsers.add_parser("calendar", help="Generate scalable posting calendar")
     cal.add_argument("--channels", type=int, default=100, help="Number of channels to schedule")

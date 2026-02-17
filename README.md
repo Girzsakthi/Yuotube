@@ -4,6 +4,7 @@ This app helps you:
 - Generate faceless videos with AI
 - Create posting calendars for many channels
 - Use a simple UI instead of only CLI
+- Choose different video **sizes** and **quality**
 
 ---
 
@@ -32,7 +33,7 @@ cp .env.example .env
 
 ### 3) Add API keys
 
-Now edit `.env` and set your keys:
+Edit `.env` and set:
 - `OPENAI_API_KEY=...`
 - `PEXELS_API_KEY=...` (needed only if `VISUAL_MODE=video`)
 
@@ -45,20 +46,35 @@ bash scripts/run_ui.sh
 Open in browser:
 - http://localhost:8501
 
+In **Render Video** tab you can choose:
+- Video size (1080x1920, 720x1280, 1080x1080, 1920x1080, 1280x720)
+- FPS (24 / 30 / 60)
+- Quality (low / medium / high)
+
+---
+
+## CLI render with size + quality
+
+```bash
+python main.py render \
+  --topic "3 Stoic habits for better focus" \
+  --out output/video.mp4 \
+  --video-size 1080x1920 \
+  --fps 30 \
+  --quality high
+```
+
+Quality levels:
+- `low` = smaller file, faster render
+- `medium` = balanced
+- `high` = better quality, larger file
+
 ---
 
 ## If you only want calendar (no video)
 
 ```bash
 python main.py calendar --channels 100 --weeks 4 --start-date 2026-02-01 --out output/calendar.csv
-```
-
----
-
-## If you want one video from CLI
-
-```bash
-python main.py render --topic "3 Stoic habits for better focus" --out output/video.mp4
 ```
 
 ---
@@ -89,4 +105,3 @@ bash scripts/build_apk.sh
 
 - **APK build fails**
   - Install Android SDK + NDK + Java first
-

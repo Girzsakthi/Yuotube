@@ -28,15 +28,39 @@ tab_render, tab_calendar, tab_custom = st.tabs(["Render Video", "Generate Calend
 
 with tab_render:
     st.subheader("Video Pipeline")
-    topic = st.text_input("Topic", "3 Stoic habits for better focus")
-    out_video = st.text_input("Output file", "output/video.mp4")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        topic = st.text_input("Topic", "3 Stoic habits for better focus")
+        out_video = st.text_input("Output file", "output/video.mp4")
+    with col_b:
+        video_size = st.selectbox(
+            "Video size",
+            ["1080x1920", "720x1280", "1080x1080", "1920x1080", "1280x720"],
+            index=0,
+        )
+        fps = st.selectbox("FPS", [24, 30, 60], index=1)
+        quality = st.selectbox("Quality", ["low", "medium", "high"], index=1)
 
     if st.button("Render Video", type="primary"):
         if not topic.strip():
             st.error("Topic is required.")
         else:
             with st.spinner("Rendering video. This can take a while..."):
-                code, out, err = run_command(["render", "--topic", topic, "--out", out_video])
+                code, out, err = run_command(
+                    [
+                        "render",
+                        "--topic",
+                        topic,
+                        "--out",
+                        out_video,
+                        "--video-size",
+                        video_size,
+                        "--fps",
+                        str(fps),
+                        "--quality",
+                        quality,
+                    ]
+                )
             st.code(out or "(no stdout)", language="bash")
             if code == 0:
                 st.success(f"Video render completed: {out_video}")
