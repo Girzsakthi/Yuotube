@@ -1,0 +1,30 @@
+{
+  "name": "SkyPlaneAR.Runtime",
+  "rootNamespace": "SkyPlaneAR",
+  "references": [
+    "Unity.XR.ARFoundation",
+    "Unity.XR.ARSubsystems",
+    "Unity.Barracuda",
+    "Unity.RenderPipelines.Universal.Runtime"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.xr.arfoundation",
+      "expression": "5.0.0",
+      "define": "SKYPLANEAR_ARFOUNDATION"
+    },
+    {
+      "name": "com.unity.barracuda",
+      "expression": "3.0.0",
+      "define": "SKYPLANEAR_BARRACUDA"
+    }
+  ],
+  "noEngineReferences": false
+}

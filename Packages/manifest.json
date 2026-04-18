@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "com.unity.xr.arfoundation": "5.1.0",
+    "com.unity.xr.arcore": "5.1.0",
+    "com.unity.barracuda": "3.0.0",
+    "com.unity.render-pipelines.universal": "14.0.9",
+    "com.unity.xr.management": "4.4.0",
+    "com.unity.inputsystem": "1.7.0",
+    "com.skyplanear.sdk": "file:../Packages/com.skyplanear.sdk"
+  },
+  "scopedRegistries": []
+}

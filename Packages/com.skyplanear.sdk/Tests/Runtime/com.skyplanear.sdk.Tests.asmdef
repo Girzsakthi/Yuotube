@@ -1,0 +1,22 @@
+{
+  "name": "SkyPlaneAR.Tests.Runtime",
+  "rootNamespace": "SkyPlaneAR.Tests",
+  "references": [
+    "SkyPlaneAR.Runtime",
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ],
+  "noEngineReferences": false
+}

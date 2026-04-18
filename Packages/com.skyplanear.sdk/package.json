@@ -1,0 +1,34 @@
+{
+  "name": "com.skyplanear.sdk",
+  "version": "1.0.0",
+  "displayName": "SkyPlaneAR SDK",
+  "description": "Production-ready AR SDK for plane detection, sky segmentation, and cloud classification. Supports AR Foundation with fallback, Unity Barracuda ML inference, and URP rendering.",
+  "unity": "2022.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://skyplanear.io/docs",
+  "changelogUrl": "https://skyplanear.io/changelog",
+  "licensesUrl": "https://skyplanear.io/license",
+  "dependencies": {
+    "com.unity.xr.arfoundation": "5.0.0",
+    "com.unity.barracuda": "3.0.0",
+    "com.unity.render-pipelines.universal": "14.0.0"
+  },
+  "keywords": ["ar", "plane-detection", "sky-detection", "barracuda", "machine-learning", "augmented-reality"],
+  "author": {
+    "name": "SkyPlaneAR",
+    "email": "sdk@skyplanear.io",
+    "url": "https://skyplanear.io"
+  },
+  "samples": [
+    {
+      "displayName": "Basic AR Sample",
+      "description": "Demonstrates plane detection and anchor placement with cube spawning.",
+      "path": "Samples~/BasicARSample"
+    },
+    {
+      "displayName": "Sky Overlay Sample",
+      "description": "Demonstrates sky segmentation and non-sky region AR overlay rendering.",
+      "path": "Samples~/SkyOverlaySample"
+    }
+  ]
+}
