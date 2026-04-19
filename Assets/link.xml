@@ -1,0 +1,19 @@
+<linker>
+  <!-- Preserve UDP socket types from IL2CPP stripping -->
+  <assembly fullname="System">
+    <namespace fullname="System.Net"          preserve="all" />
+    <namespace fullname="System.Net.Sockets"  preserve="all" />
+    <namespace fullname="System.Net.NetworkInformation" preserve="all" />
+  </assembly>
+
+  <!-- Preserve JSON serialisation types -->
+  <assembly fullname="UnityEngine">
+    <type fullname="UnityEngine.JsonUtility" preserve="all" />
+  </assembly>
+
+  <!-- Preserve ARMilitary data types used via JsonUtility -->
+  <assembly fullname="ARMilitary.Runtime">
+    <namespace fullname="ARMilitary.Data"    preserve="all" />
+    <namespace fullname="ARMilitary.Network" preserve="all" />
+  </assembly>
+</linker>

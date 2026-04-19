@@ -1,0 +1,25 @@
+{
+  "name": "ARMilitary.Runtime",
+  "rootNamespace": "ARMilitary",
+  "references": [
+    "Unity.XR.ARFoundation",
+    "Unity.XR.ARSubsystems",
+    "UnityEngine.UI",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [
+    {
+      "name": "com.unity.xr.arfoundation",
+      "expression": "5.0.0",
+      "define": "ARMILITARY_ARFOUNDATION"
+    }
+  ],
+  "noEngineReferences": false
+}
