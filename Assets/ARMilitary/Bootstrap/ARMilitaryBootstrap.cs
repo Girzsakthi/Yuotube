@@ -17,12 +17,11 @@ namespace ARMilitary.Bootstrap
     [DisallowMultipleComponent]
     public class ARMilitaryBootstrap : MonoBehaviour
     {
-        private Canvas         _uiCanvas;
-        private ARSession      _arSession;
-        private Camera         _arCamera;
-        private ARPlaneManager _planeManager;
+        private Canvas           _uiCanvas;
+        private ARSession        _arSession;
+        private Camera           _arCamera;
+        private ARPlaneManager   _planeManager;
         private ARRaycastManager _raycastManager;
-        private ARAnchorManager  _anchorManager;
 
         private ModeSelectUI _modeSelectUI;
         private AppMode      _mode = AppMode.None;
@@ -80,9 +79,8 @@ namespace ARMilitary.Bootstrap
             origin.Camera = _arCamera;
             origin.CameraFloorOffsetObject = camOffset;
 
-            _planeManager    = originGO.AddComponent<ARPlaneManager>();
-            _raycastManager  = originGO.AddComponent<ARRaycastManager>();
-            _anchorManager   = originGO.AddComponent<ARAnchorManager>();
+            _planeManager   = originGO.AddComponent<ARPlaneManager>();
+            _raycastManager = originGO.AddComponent<ARRaycastManager>();
 
             // Plane visualizer (optional debug mesh)
             _planeManager.planePrefab = CreatePlanePrefab();
@@ -91,7 +89,7 @@ namespace ARMilitary.Bootstrap
             sessionCtrl.Initialize(_arSession);
 
             var anchorMgrComp = originGO.AddComponent<PlaneAnchorManager>();
-            anchorMgrComp.Initialize(_raycastManager, _anchorManager, _arCamera);
+            anchorMgrComp.Initialize(_raycastManager, _arCamera);
         }
 
         // ── UI Canvas (Screen Space Overlay) ─────────────────────────────────
@@ -176,7 +174,10 @@ namespace ARMilitary.Bootstrap
             var meshFilter   = go.AddComponent<MeshFilter>();
             var meshRenderer = go.AddComponent<MeshRenderer>();
 
-            var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            var shader = Shader.Find("Universal Render Pipeline/Lit")
+                      ?? Shader.Find("Standard")
+                      ?? Shader.Find("Hidden/InternalErrorShader");
+            var mat = new Material(shader);
             mat.color = new Color(0.2f, 1f, 0.2f, 0.15f);
             meshRenderer.material = mat;
 

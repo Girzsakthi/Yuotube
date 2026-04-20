@@ -137,7 +137,10 @@ namespace ARMilitary.Primitives
 
         private static Material MakeMat(Color color)
         {
-            var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            var shader = Shader.Find("Universal Render Pipeline/Lit")
+                      ?? Shader.Find("Standard")
+                      ?? Shader.Find("Hidden/InternalErrorShader");
+            var mat = new Material(shader);
             mat.color = color;
             return mat;
         }

@@ -13,7 +13,6 @@ namespace ARMilitary.AR
         public static PlaneAnchorManager Instance { get; private set; }
 
         private ARRaycastManager _raycastManager;
-        private ARAnchorManager  _anchorManager;
         private Camera           _arCamera;
 
         private readonly Dictionary<string, GameObject> _spawnedObjects = new Dictionary<string, GameObject>();
@@ -25,10 +24,9 @@ namespace ARMilitary.AR
             Instance = this;
         }
 
-        public void Initialize(ARRaycastManager raycastMgr, ARAnchorManager anchorMgr, Camera arCamera)
+        public void Initialize(ARRaycastManager raycastMgr, Camera arCamera)
         {
             _raycastManager = raycastMgr;
-            _anchorManager  = anchorMgr;
             _arCamera       = arCamera;
         }
 
@@ -104,21 +102,10 @@ namespace ARMilitary.AR
                    Vector3.up * payload.heightOffset;
         }
 
-        private ARAnchor CreateAnchor(Vector3 worldPos)
-        {
-            if (_anchorManager == null) return null;
-            try
-            {
-                var anchorGO = new GameObject("ARMilitaryAnchor");
-                anchorGO.transform.position = worldPos;
-                var anchor = anchorGO.AddComponent<ARAnchor>();
-                return anchor;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        // ARF 5.x removed manual ARAnchor instantiation.
+        // We attach objects to trackable planes via pose directly;
+        // world-space roots give equivalent stability for training use.
+        private static ARAnchor CreateAnchor(Vector3 worldPos) => null;
 
         private static Transform CreateWorldTransform(Vector3 worldPos)
         {
